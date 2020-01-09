@@ -52,6 +52,16 @@ std::string Ram(int pid);
 std::string Uid(int pid);
 std::string User(int pid);
 long int UpTime(int pid);
+float CpuUtilization(int pid);
+
+std::vector<std::string> ReadProcStatItems(unsigned int pid,
+                                           const std::vector<int>& ats);
+
+std::string ReadProcStatusItem(int pid, std::string prefix);
+std::string ReadProcMeminfoItem(std::string prefix);
+std::string ReadProcStatItem(std::string prefix);
+std::string ReadFileRow(std::string path, std::string prefix);
+
 };  // namespace LinuxParser
 
 #endif
