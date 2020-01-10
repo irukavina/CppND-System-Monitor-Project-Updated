@@ -170,9 +170,10 @@ float LinuxParser::CpuUtilization(int pid) {
   long cutime = stol(stat_items[2]);
   long cstime = stol(stat_items[3]);
   long total_time_seconds =
-      (utime + stime + cutime + cstime) / sysconf(_SC_CLK_TCK);
+      (utime + stime + cutime + cstime) /
+      sysconf(_SC_CLK_TCK);  // TODO: Move the times to ActiveJiffies(int pid)
 
-  long uptime_seconds = UpTime();
+  long uptime_seconds = UpTime();  // TODO: Change to process based uptime
 
   float percentage = 100.0 * ((double)total_time_seconds / uptime_seconds);
   return percentage;
