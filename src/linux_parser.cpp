@@ -154,6 +154,7 @@ string LinuxParser::Command(int pid) {
   std::ifstream filestream(kProcDirectory + to_string(pid) + kCmdlineFilename,
                            std::ios::in);
   std::getline(filestream, result);
+  result.erase(std::find(result.begin(), result.end(), '\0'), result.end());
   return result;
 }
 

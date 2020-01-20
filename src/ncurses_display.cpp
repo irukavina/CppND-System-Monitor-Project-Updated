@@ -57,10 +57,10 @@ void NCursesDisplay::DisplayProcesses(std::vector<Process>& processes,
   int row{0};
   int const pid_column{2};
   int const user_column{9};
-  int const cpu_column{16};
-  int const ram_column{26};
-  int const time_column{35};
-  int const command_column{46};
+  int const cpu_column{21};
+  int const ram_column{31};
+  int const time_column{40};
+  int const command_column{51};
   wattron(window, COLOR_PAIR(2));
   mvwprintw(window, ++row, pid_column, "PID");
   mvwprintw(window, row, user_column, "USER");
@@ -70,15 +70,30 @@ void NCursesDisplay::DisplayProcesses(std::vector<Process>& processes,
   mvwprintw(window, row, command_column, "COMMAND");
   wattroff(window, COLOR_PAIR(2));
   for (int i = 0; i < n; ++i) {
-    mvwprintw(window, ++row, pid_column, to_string(processes[i].Pid()).c_str());
-    mvwprintw(window, row, user_column, processes[i].User().c_str());
+    string pid_string{to_string(processes[i].Pid())};
+    pid_string.resize(user_column - pid_column - 1, ' ');
+    mvwprintw(window, ++row, pid_column, pid_string.c_str());
+
+    string user_string{processes[i].User()};
+    user_string.resize(cpu_column - user_column - 1, ' ');
+    mvwprintw(window, row, user_column, user_string.c_str());
+
     float cpu = processes[i].CpuUtilization() * 100;
-    mvwprintw(window, row, cpu_column, to_string(cpu).substr(0, 4).c_str());
-    mvwprintw(window, row, ram_column, processes[i].Ram().c_str());
-    mvwprintw(window, row, time_column,
-              Format::ElapsedTime(processes[i].UpTime()).c_str());
-    mvwprintw(window, row, command_column,
-              processes[i].Command().substr(0, window->_maxx - 46).c_str());
+    string cpu_string{to_string(cpu).substr(0, 4)};
+    cpu_string.resize(ram_column - cpu_column - 1, ' ');
+    mvwprintw(window, row, cpu_column, cpu_string.c_str());
+
+    string ram_string{processes[i].Ram()};
+    ram_string.resize(time_column - ram_column - 1, ' ');
+    mvwprintw(window, row, ram_column, ram_string.c_str());
+
+    string time_string{Format::ElapsedTime(processes[i].UpTime())};
+    time_string.resize(command_column - time_column - 1, ' ');
+    mvwprintw(window, row, time_column, time_string.c_str());
+
+    string command_string = processes[i].Command();
+    command_string.resize(window->_maxx - command_column - 1, ' ');
+    mvwprintw(window, row, command_column, command_string.c_str());
   }
 }
 
