@@ -2,6 +2,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <algorithm>
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -11,6 +12,8 @@ using std::stof;
 using std::string;
 using std::to_string;
 using std::vector;
+
+namespace fs = std::filesystem;
 
 // DONE: An example of how to read data from the filesystem
 string LinuxParser::OperatingSystem() {
@@ -51,20 +54,15 @@ string LinuxParser::Kernel() {
 // BONUS: Update this to use std::filesystem
 vector<int> LinuxParser::Pids() {
   vector<int> pids;
-  DIR* directory = opendir(kProcDirectory.c_str());
-  struct dirent* file;
-  while ((file = readdir(directory)) != nullptr) {
-    // Is this a directory?
-    if (file->d_type == DT_DIR) {
-      // Is every character of the name a digit?
-      string filename(file->d_name);
-      if (std::all_of(filename.begin(), filename.end(), isdigit)) {
-        int pid = stoi(filename);
-        pids.push_back(pid);
+  for (auto& p : fs::directory_iterator(kProcDirectory)) {
+    string path = p.path();
+    string pid = path.substr(kProcDirectoryStrLength);
+    if (fs::is_directory(path)) {
+      if (std::all_of(pid.begin(), pid.end(), isdigit)) {
+        pids.push_back(stoi(pid));
       }
     }
   }
-  closedir(directory);
   return pids;
 }
 
@@ -110,8 +108,6 @@ long LinuxParser::ActiveJiffies() {
   long irq = stoll(cpu_utilization[5]);
   long softirq = stoll(cpu_utilization[6]);
   long steal = stoll(cpu_utilization[7]);
-  // long guest = stoll(cpu_utilization[8]);
-  // long guest_nice = stoll(cpu_utilization[9]);
   return user + nice + system + irq + softirq + steal;
 }
 
@@ -207,13 +203,13 @@ long LinuxParser::UpTime(int pid) {
   return UpTime() - (long)process_start_time;
 }
 
-float LinuxParser::CpuUtilization(int pid) {
-  long total_time_seconds = ActiveJiffies(pid) / sysconf(_SC_CLK_TCK);
-  long uptime_seconds = UpTime(pid);
+// float LinuxParser::CpuUtilization(int pid) {
+//   long total_time_seconds = ActiveJiffies(pid) / sysconf(_SC_CLK_TCK);
+//   long uptime_seconds = UpTime(pid);
 
-  float percentage = (double)total_time_seconds / uptime_seconds;
-  return percentage;
-}
+//   float percentage = (double)total_time_seconds / uptime_seconds;
+//   return percentage;
+// }
 
 vector<std::string> LinuxParser::ReadProcStatItems(unsigned int pid,
                                                    const vector<int>& ats) {

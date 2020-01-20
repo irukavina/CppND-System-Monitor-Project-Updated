@@ -41,13 +41,29 @@ bool Process::operator>(Process const& a) const {
   return cpu_utilization_ > a.cpu_utilization_;
 }
 
+void Process::RefreshData() {
+  cpu_utilization_ = CalculateCpuUtilization();
+  command_ = LinuxParser::Command(pid_);
+  ram_ = LinuxParser::Ram(pid_);
+  user_ = LinuxParser::User(pid_);
+  up_time_ = LinuxParser::UpTime(pid_);
+}
+
+float Process::CalculateCpuUtilization() {
+  long process_jiffies = LinuxParser::ActiveJiffies(pid_);
+  long system_jiffies = LinuxParser::Jiffies();
+
+  long delta_process_jiffies = process_jiffies - prev_process_jiffies_;
+  long delta_system_jiffies = system_jiffies - prev_system_jiffies_;
+
+  prev_process_jiffies_ = process_jiffies;
+  prev_system_jiffies_ = system_jiffies;
+
+  return (float)delta_process_jiffies / delta_system_jiffies;
+}
+
 Process Process::FromLinuxParser(int pid) {
   Process process(pid);
-  process.cpu_utilization_ = LinuxParser::CpuUtilization(pid);
-  process.command_ = LinuxParser::Command(pid);
-  process.ram_ = LinuxParser::Ram(pid);
-  process.user_ = LinuxParser::User(pid);
-  process.up_time_ = LinuxParser::UpTime(pid);
-
+  process.RefreshData();
   return process;
 }

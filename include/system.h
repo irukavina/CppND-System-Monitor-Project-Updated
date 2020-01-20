@@ -6,6 +6,7 @@
 
 #include "process.h"
 #include "processor.h"
+#include "system_processes.h"
 
 class System {
  public:
@@ -21,7 +22,7 @@ class System {
   // TODO: Define any necessary private members
  private:
   Processor cpu_ = {};
-  std::vector<Process> processes_ = {};
+  SystemProcesses system_processes_ = {};
 };
 
 #endif

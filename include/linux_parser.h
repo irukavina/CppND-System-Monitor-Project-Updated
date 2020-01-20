@@ -8,6 +8,7 @@
 namespace LinuxParser {
 // Paths
 const std::string kProcDirectory{"/proc/"};
+const long unsigned int kProcDirectoryStrLength{kProcDirectory.length()};
 const std::string kCmdlineFilename{"/cmdline"};
 const std::string kCpuinfoFilename{"/cpuinfo"};
 const std::string kStatusFilename{"/status"};

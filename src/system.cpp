@@ -8,6 +8,7 @@
 #include "process.h"
 #include "processor.h"
 #include "system.h"
+#include "system_processes.h"
 
 using std::set;
 using std::size_t;
@@ -19,19 +20,8 @@ Processor& System::Cpu() { return cpu_; }
 
 // TODO: Return a container composed of the system's processes
 vector<Process>& System::Processes() {
-  processes_.clear();
-
-  for (int pid : LinuxParser::Pids()) {
-    try {
-      Process process = Process::FromLinuxParser(pid);
-      processes_.push_back(process);
-    } catch (std::invalid_argument&) {
-    }
-  }
-
-  std::sort(processes_.begin(), processes_.end(), std::greater<Process>());
-
-  return processes_;
+  system_processes_.RefreshData();
+  return system_processes_.Items();
 }
 
 // TODO: Return the system's kernel identifier (string)

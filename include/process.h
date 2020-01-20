@@ -9,11 +9,12 @@ It contains relevant attributes as shown below
 class Process {
  public:
   Process(int pid);
-  int Pid();                               // TODO: See src/process.cpp
-  std::string User();                      // TODO: See src/process.cpp
-  std::string Command();                   // TODO: See src/process.cpp
-  float CpuUtilization() const;            // TODO: See src/process.cpp
-  std::string Ram();                       // TODO: See src/process.cpp
+  int Pid();                     // TODO: See src/process.cpp
+  std::string User();            // TODO: See src/process.cpp
+  std::string Command();         // TODO: See src/process.cpp
+  float CpuUtilization() const;  // TODO: See src/process.cpp
+  std::string Ram();             // TODO: See src/process.cpp
+  void RefreshData();
   long int UpTime();                       // TODO: See src/process.cpp
   bool operator<(Process const& a) const;  // TODO: See src/process.cpp
   bool operator>(Process const& a) const;  // TODO: See src/process.cpp
@@ -23,11 +24,15 @@ class Process {
 
  private:
   int pid_;
-  float cpu_utilization_;
+  float cpu_utilization_ = 0.0;
+  long int prev_process_jiffies_ = 0;
+  long int prev_system_jiffies_ = 0;
   std::string command_;
   std::string ram_;
   std::string user_;
   long int up_time_;
+
+  float CalculateCpuUtilization();
 };
 
 #endif
