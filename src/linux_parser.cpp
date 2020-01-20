@@ -69,7 +69,12 @@ vector<int> LinuxParser::Pids() {
 }
 
 // TODO: Read and return the system memory utilization
-float LinuxParser::MemoryUtilization() { return 0.0; }
+float LinuxParser::MemoryUtilization() {
+  long mem_total = stol(LinuxParser::ReadProcMeminfoItem("MemTotal:"));
+  long mem_free = stol(LinuxParser::ReadProcMeminfoItem("MemFree:"));
+
+  return (float)(mem_total - mem_free) / mem_total;
+}
 
 // TODO: Read and return the system uptime
 long LinuxParser::UpTime() {
@@ -206,7 +211,7 @@ float LinuxParser::CpuUtilization(int pid) {
   long total_time_seconds = ActiveJiffies(pid) / sysconf(_SC_CLK_TCK);
   long uptime_seconds = UpTime(pid);
 
-  float percentage = 100.0 * ((double)total_time_seconds / uptime_seconds);
+  float percentage = (double)total_time_seconds / uptime_seconds;
   return percentage;
 }
 

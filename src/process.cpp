@@ -17,28 +17,37 @@ Process::Process(int pid) : pid_(pid){};
 int Process::Pid() { return pid_; }
 
 // TODO: Return this process's CPU utilization
-float Process::CpuUtilization() const {
-  return LinuxParser::CpuUtilization(pid_);
-}
+float Process::CpuUtilization() const { return cpu_utilization_; }
 
 // TODO: Return the command that generated this process
-string Process::Command() { return LinuxParser::Command(pid_); }
+string Process::Command() { return command_; }
 
 // TODO: Return this process's memory utilization
-string Process::Ram() { return LinuxParser::Ram(pid_); }
+string Process::Ram() { return ram_; }
 
 // TODO: Return the user (name) that generated this process
-string Process::User() { return LinuxParser::User(pid_); }
+string Process::User() { return user_; }
 
 // TODO: Return the age of this process (in seconds)
-long int Process::UpTime() { return LinuxParser::UpTime(pid_); }
+long int Process::UpTime() { return up_time_; }
 
 // TODO: Overload the "less than" comparison operator for Process objects
 // REMOVE: [[maybe_unused]] once you define the function
 bool Process::operator<(Process const& a) const {
-  return CpuUtilization() < a.CpuUtilization();
+  return cpu_utilization_ < a.cpu_utilization_;
 }
 
 bool Process::operator>(Process const& a) const {
-  return CpuUtilization() > a.CpuUtilization();
+  return cpu_utilization_ > a.cpu_utilization_;
+}
+
+Process Process::FromLinuxParser(int pid) {
+  Process process(pid);
+  process.cpu_utilization_ = LinuxParser::CpuUtilization(pid);
+  process.command_ = LinuxParser::Command(pid);
+  process.ram_ = LinuxParser::Ram(pid);
+  process.user_ = LinuxParser::User(pid);
+  process.up_time_ = LinuxParser::UpTime(pid);
+
+  return process;
 }

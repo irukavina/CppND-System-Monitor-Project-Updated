@@ -22,7 +22,11 @@ vector<Process>& System::Processes() {
   processes_.clear();
 
   for (int pid : LinuxParser::Pids()) {
-    processes_.push_back(Process(pid));
+    try {
+      Process process = Process::FromLinuxParser(pid);
+      processes_.push_back(process);
+    } catch (std::invalid_argument) {
+    }
   }
 
   std::sort(processes_.begin(), processes_.end(), std::greater<Process>());
@@ -34,12 +38,7 @@ vector<Process>& System::Processes() {
 std::string System::Kernel() { return LinuxParser::Kernel(); }
 
 // TODO: Return the system's memory utilization
-float System::MemoryUtilization() {
-  long mem_total = stol(LinuxParser::ReadProcMeminfoItem("MemTotal:"));
-  long mem_free = stol(LinuxParser::ReadProcMeminfoItem("MemFree:"));
-
-  return (double)(mem_total - mem_free) / mem_total;
-}
+float System::MemoryUtilization() { return LinuxParser::MemoryUtilization(); }
 
 // TODO: Return the operating system name
 std::string System::OperatingSystem() { return LinuxParser::OperatingSystem(); }

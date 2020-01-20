@@ -18,8 +18,16 @@ class Process {
   bool operator<(Process const& a) const;  // TODO: See src/process.cpp
   bool operator>(Process const& a) const;  // TODO: See src/process.cpp
   // TODO: Declare any necessary private members
+
+  static Process FromLinuxParser(int pid);
+
  private:
   int pid_;
+  float cpu_utilization_;
+  std::string command_;
+  std::string ram_;
+  std::string user_;
+  long int up_time_;
 };
 
 #endif
