@@ -25,7 +25,7 @@ vector<Process>& System::Processes() {
     try {
       Process process = Process::FromLinuxParser(pid);
       processes_.push_back(process);
-    } catch (std::invalid_argument) {
+    } catch (std::invalid_argument&) {
     }
   }
 
