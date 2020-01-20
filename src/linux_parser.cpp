@@ -51,7 +51,6 @@ string LinuxParser::Kernel() {
   return kernel;
 }
 
-// BONUS: Update this to use std::filesystem
 vector<int> LinuxParser::Pids() {
   vector<int> pids;
   for (auto& p : fs::directory_iterator(kProcDirectory)) {
@@ -66,7 +65,6 @@ vector<int> LinuxParser::Pids() {
   return pids;
 }
 
-// TODO: Read and return the system memory utilization
 float LinuxParser::MemoryUtilization() {
   long mem_total = stol(LinuxParser::ReadProcMeminfoItem("MemTotal:"));
   long mem_free = stol(LinuxParser::ReadProcMeminfoItem("MemFree:"));
@@ -74,7 +72,6 @@ float LinuxParser::MemoryUtilization() {
   return (float)(mem_total - mem_free) / mem_total;
 }
 
-// TODO: Read and return the system uptime
 long LinuxParser::UpTime() {
   double sys_uptime;
   std::ifstream(kProcDirectory + kUptimeFilename, std::ios::in) >> sys_uptime;
@@ -82,11 +79,8 @@ long LinuxParser::UpTime() {
   return static_cast<long>(sys_uptime);
 }
 
-// TODO: Read and return the number of jiffies for the system
 long LinuxParser::Jiffies() { return ActiveJiffies() + IdleJiffies(); }
 
-// TODO: Read and return the number of active jiffies for a PID
-// REMOVE: [[maybe_unused]] once you define the function
 long LinuxParser::ActiveJiffies(int pid) {
   vector<string> stat_items =
       ReadProcStatItems(pid, vector<int>{13, 14, 15, 16});
@@ -99,7 +93,6 @@ long LinuxParser::ActiveJiffies(int pid) {
   return utime + stime + cutime + cstime;
 }
 
-// TODO: Read and return the number of active jiffies for the system
 long LinuxParser::ActiveJiffies() {
   vector<string> cpu_utilization = CpuUtilization();
   long user = stoll(cpu_utilization[0]);
@@ -111,7 +104,6 @@ long LinuxParser::ActiveJiffies() {
   return user + nice + system + irq + softirq + steal;
 }
 
-// TODO: Read and return the number of idle jiffies for the system
 long LinuxParser::IdleJiffies() {
   vector<string> cpu_utilization = CpuUtilization();
   long idle = stoll(cpu_utilization[3]);
@@ -119,7 +111,6 @@ long LinuxParser::IdleJiffies() {
   return idle + iowait;
 }
 
-// TODO: Read and return CPU utilization
 vector<string> LinuxParser::CpuUtilization() {
   std::ifstream filestream(kStatPath, std::ios::in);
   string line;
@@ -137,18 +128,14 @@ vector<string> LinuxParser::CpuUtilization() {
   return result;
 }
 
-// TODO: Read and return the total number of processes
 int LinuxParser::TotalProcesses() {
   return stoi(LinuxParser::ReadProcStatItem("processes"));
 }
 
-// TODO: Read and return the number of running processes
 int LinuxParser::RunningProcesses() {
   return stoi(LinuxParser::ReadProcStatItem("procs_running"));
 }
 
-// TODO: Read and return the command associated with a process
-// REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Command(int pid) {
   string result;
   std::ifstream filestream(kProcDirectory + to_string(pid) + kCmdlineFilename,
@@ -158,8 +145,6 @@ string LinuxParser::Command(int pid) {
   return result;
 }
 
-// TODO: Read and return the memory used by a process
-// REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Ram(int pid) {
   string vmsize = ReadProcStatusItem(pid, "VmSize:");
   unsigned long long vmsize_kb;
@@ -168,12 +153,8 @@ string LinuxParser::Ram(int pid) {
   return to_string(vmsize_kb / 1024);
 }
 
-// TODO: Read and return the user ID associated with a process
-// REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Uid(int pid) { return ReadProcStatusItem(pid, "Uid:"); }
 
-// TODO: Read and return the user associated with a process
-// REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::User(int pid) {
   string uid = Uid(pid);
   string line;
@@ -195,7 +176,6 @@ string LinuxParser::User(int pid) {
   return result;
 }
 
-// TODO: Read and return the uptime of a process
 long LinuxParser::UpTime(int pid) {
   vector<string> proc_stat_items = ReadProcStatItems(pid, vector<int>{21});
   auto process_start_time = std::stoll(proc_stat_items[0]);
@@ -203,14 +183,6 @@ long LinuxParser::UpTime(int pid) {
 
   return UpTime() - (long)process_start_time;
 }
-
-// float LinuxParser::CpuUtilization(int pid) {
-//   long total_time_seconds = ActiveJiffies(pid) / sysconf(_SC_CLK_TCK);
-//   long uptime_seconds = UpTime(pid);
-
-//   float percentage = (double)total_time_seconds / uptime_seconds;
-//   return percentage;
-// }
 
 vector<std::string> LinuxParser::ReadProcStatItems(unsigned int pid,
                                                    const vector<int>& ats) {

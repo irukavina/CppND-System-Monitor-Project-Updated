@@ -9,18 +9,15 @@ It contains relevant attributes as shown below
 class Process {
  public:
   Process(int pid);
-  int Pid();                     // TODO: See src/process.cpp
-  std::string User();            // TODO: See src/process.cpp
-  std::string Command();         // TODO: See src/process.cpp
-  float CpuUtilization() const;  // TODO: See src/process.cpp
-  std::string Ram();             // TODO: See src/process.cpp
+  int Pid();
+  std::string User();
+  std::string Command();
+  float CpuUtilization() const;
+  std::string Ram();
   void RefreshData();
-  long int UpTime();                       // TODO: See src/process.cpp
-  bool operator<(Process const& a) const;  // TODO: See src/process.cpp
-  bool operator>(Process const& a) const;  // TODO: See src/process.cpp
-  // TODO: Declare any necessary private members
-
-  static Process FromLinuxParser(int pid);
+  long int UpTime();
+  bool operator<(Process const& a) const;
+  bool operator>(Process const& a) const;
 
  private:
   int pid_;
