@@ -12,6 +12,7 @@ const std::string kCmdlineFilename{"/cmdline"};
 const std::string kCpuinfoFilename{"/cpuinfo"};
 const std::string kStatusFilename{"/status"};
 const std::string kStatFilename{"/stat"};
+const std::string kStatPath{"/proc/stat"};
 const std::string kUptimeFilename{"/uptime"};
 const std::string kMeminfoFilename{"/meminfo"};
 const std::string kVersionFilename{"/version"};
